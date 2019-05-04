@@ -95,10 +95,5 @@ void app_main(){
     ESP_ERROR_CHECK(esp_wifi_scan_start(&scanWifiConfig, false));
     // get scan results
     printf("Get scan results\n");
-    uint16_t nbrOfAPs = 10;
-    wifi_ap_record_t listAPs [nbrOfAPs];
-    vTaskDelay(200/portTICK_PERIOD_MS);
-    ESP_ERROR_CHECK(esp_wifi_scan_get_ap_records(&nbrOfAPs, listAPs));
-    printf("we found %u AP\n", nbrOfAPs);
     //xTaskCreate(&scanWifiTask, "Scan wifi task", 2048, NULL, 1, NULL);
 }
