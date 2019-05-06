@@ -25,6 +25,37 @@
 // #include <esp_event.h>
 #include <esp_event_loop.h>
 
+// function that display all APs information
+void displayAPInfo(uint16_t ap_nbr, wifi_ap_record_t *ap_record){
+    for(int i=0; i<ap_nbr; i++){
+        char *auth_mode = "Unknow";
+        switch (ap_record[i].authmode)
+        {
+        case WIFI_AUTH_OPEN:
+            auth_mode = "No password";
+            break;
+        case WIFI_AUTH_WEP:
+            auth_mode = "WEP";
+            break;
+        case WIFI_AUTH_WPA_PSK:
+            auth_mode = "WPA PSK";
+            break;
+        case WIFI_AUTH_WPA2_ENTERPRISE:
+            auth_mode = "WPA2 Enterprise";
+            break;
+        case WIFI_AUTH_WPA2_PSK:
+            auth_mode = "WPA2 PSK";
+            break;
+        case WIFI_AUTH_WPA_WPA2_PSK:
+            auth_mode = "WPA WPA2 PSK";
+            break;
+        default:
+            break;
+        }
+        printf("AP SSID is %s (signal strength: %d) and authentification mode is %s\n", (char*)ap_record[i].ssid, ap_record[i].rssi, auth_mode);
+    }
+}
+
 // event handler that will be called each time an event has been detected (launched)
 //static void wifi_event_handler(void *even_arg, esp_event_base_t event_base, int32_t event_id, void* event_data){
 // the event handler or the callback function for the event handler task when wifi event triggered
@@ -35,10 +66,13 @@ static esp_err_t wifi_event_handler(void *ctx, system_event_t *event){
         case SYSTEM_EVENT_SCAN_DONE:
         {
             printf("Scan network for APs done\n");
+            // get scan results
+            printf("Get scan results\n");
             uint16_t nbrOfAPs = 10;
             wifi_ap_record_t listAPs[nbrOfAPs];
             ESP_ERROR_CHECK(esp_wifi_scan_get_ap_records(&nbrOfAPs, listAPs));
-            printf("message from event said the number of APs is %u", nbrOfAPs);
+            printf("message from event said, the number of APs is %u\n", nbrOfAPs);
+            displayAPInfo(nbrOfAPs, listAPs);
             break;
         }
         default:
@@ -48,16 +82,6 @@ static esp_err_t wifi_event_handler(void *ctx, system_event_t *event){
 } 
 
 void scanWifiTask(void *pvParameters){
-    
-    vTaskDelete(NULL);
-    while(1){
-        vTaskDelay(1000/portTICK_PERIOD_MS);        
-    }
-}
-
-// the app_main is the default function that the RTOS calls to run as the first task. like the main function
-void app_main(){
-    printf("Start app main task\n");
     printf("Init flash\n");
     ESP_ERROR_CHECK(nvs_flash_init());
     //printf("Clear flash");
@@ -93,12 +117,12 @@ void app_main(){
     scanWifiConfig.scan_time.active.min = 100; // the minimum time in ms to scan one channel
     scanWifiConfig.scan_time.active.max = 1000; // above (more than) 1500 ms may cause the device (station) to disconnect from the AP that's why it's not recommanded
     ESP_ERROR_CHECK(esp_wifi_scan_start(&scanWifiConfig, false));
-    // get scan results
-    printf("Get scan results\n");
-    uint16_t nbrOfAPs = 10;
-    wifi_ap_record_t listAPs [nbrOfAPs];
-    vTaskDelay(200/portTICK_PERIOD_MS);
-    ESP_ERROR_CHECK(esp_wifi_scan_get_ap_records(&nbrOfAPs, listAPs));
-    printf("we found %u AP\n", nbrOfAPs);
-    //xTaskCreate(&scanWifiTask, "Scan wifi task", 2048, NULL, 1, NULL);
+    // stop task
+    vTaskDelete(NULL);
+}
+
+// the app_main is the default function that the RTOS calls to run as the first task. like the main function
+void app_main(){
+    printf("Start app main task\n");
+    xTaskCreate(&scanWifiTask, "Scan wifi task", 2048, NULL, 1, NULL);
 }
