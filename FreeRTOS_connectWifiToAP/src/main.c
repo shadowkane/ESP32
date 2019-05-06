@@ -76,6 +76,9 @@ static esp_err_t main_event_task_callback(void *ctx, system_event_t *event){
     {
     case SYSTEM_EVENT_STA_START:
         printf("Wifi system started\n");
+        // set hostname
+        printf("set new hostname\n");
+        ESP_ERROR_CHECK(tcpip_adapter_set_hostname(TCPIP_ADAPTER_IF_STA, "its me"));
         break;
     case SYSTEM_EVENT_STA_CONNECTED:
         printf("Wifi system conncted to the AP\n");        
@@ -102,6 +105,7 @@ void wifiConnectionTask(void *pvParameters){
     printf("Start wifi connection task\n");
     // init the tcp/ip adapter
     tcpip_adapter_init();
+    
     // create and init the event task loop
     ESP_ERROR_CHECK(esp_event_loop_init(main_event_task_callback, NULL));
     // create and init wifi driver task
