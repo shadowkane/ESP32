@@ -106,6 +106,7 @@ esp_err_t eventHandler(void *ctx, system_event_t *event){
         break;
     case SYSTEM_EVENT_AP_STAIPASSIGNED:
         // in this event, the event data has no struction, which mean the event_info has no paramater like sta_ipassigned where you can get any information about that STA
+        
         printf("All STA's MAC address in this list:\n");
         // list of infomations for all STAs is this AP
         wifi_sta_list_t staList;
