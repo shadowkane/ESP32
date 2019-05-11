@@ -15,11 +15,13 @@
 #include <string.h>
 // freeRTOS libraries
 #include <freertos/FreeRTOS.h>
+#include <freertos/event_groups.h>
 #include <freertos/task.h>
 // esp libraries
 #include <nvs_flash.h>
 #include <esp_wifi.h>
 #include <esp_event_loop.h>
+#include <esp_event_legacy.h>
 #include <esp_log.h>
 
 // this function will get 4 paramaters of type unsigned integer 32 bits, representing each octet of the IP address and return it as one value of type 32 bits
@@ -94,7 +96,10 @@ esp_err_t eventHandler(void *ctx, system_event_t *event){
         // run this section when a new STA connected to this AP.
         // the data struction of this event is of type wifi_event_ap_staconnected_t. this struction has 2 members, the mac address of the STA and its aid that this AP gives to it.
         printf("STA just connected.\n");
-        printf("STA MAC@: %s\n", ip4addr_ntoa(&event->event_info.sta_connected.mac));
+        printf("STA MAC@: %02X",  event->event_info.sta_connected.mac[0]);
+            for(int i=1; i<6; i++){
+                printf(":%02X", event->event_info.sta_connected.mac[i]);
+            }
         wifi_sta_list_t nbcClient;
         ESP_ERROR_CHECK(esp_wifi_ap_get_sta_list(&nbcClient));
         printf("Total number of connected STA: %d\n", nbcClient.num);
@@ -105,8 +110,7 @@ esp_err_t eventHandler(void *ctx, system_event_t *event){
         printf("STA ip address maybe %s\n", ip4addr_ntoa(&staAddr));
         break;
     case SYSTEM_EVENT_AP_STAIPASSIGNED:
-        // in this event, the event data has no struction, which mean the event_info has no paramater like sta_ipassigned where you can get any information about that STA
-        
+        // in thise version of ESP-IDF (3.2) the SYSTEM_EVENT_AP_STAIPASSIGNED event has no data struction, which mean the event_info has no paramater like sta_ipassigned where you can get any information about that STA.
         printf("All STA's MAC address in this list:\n");
         // list of infomations for all STAs is this AP
         wifi_sta_list_t staList;
@@ -168,7 +172,7 @@ void AP_task(void* pvParamaters){
     ESP_ERROR_CHECK(esp_event_loop_init(&eventHandler, NULL));
     // create and init wifi driver task
     wifi_init_config_t defaultWifiConfig = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK( esp_wifi_init(&defaultWifiConfig));
+    ESP_ERROR_CHECK(esp_wifi_init(&defaultWifiConfig));
     // set wifi mode
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
     // configure AP
@@ -199,5 +203,5 @@ void app_main(){
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(nvs_flash_erase());
     // start AP task
-    xTaskCreate(&AP_task, "AP task", 10000, NULL, 1, NULL);
+    xTaskCreate(&AP_task, "AP task", 12000, NULL, 1, NULL);
 }
