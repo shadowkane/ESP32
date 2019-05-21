@@ -9,8 +9,8 @@
 #define LED_PIN 25
 
 // AP settings
-const char AP_ssid[] = "J_family";
-const char AP_password[] = "1@&R_h&w_jomaa";
+const char AP_ssid[] = "Your_SSID";
+const char AP_password[] = "Your_password";
 // MQTT Broker config
 const char Broker_server[] = "192.168.1.107";
 const int Broker_port = 1883;
