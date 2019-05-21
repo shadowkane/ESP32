@@ -17,8 +17,8 @@
 #include <esp_log.h> // for error check and log display
 
 // AP configurations
-#define AP_SSID "J_family"
-#define AP_PASSWORD "1@&R_h&w_jomaa"
+#define AP_SSID "Your_SSID"
+#define AP_PASSWORD "Your_password"
 
 void wifiDisconnectionTask(void *pvParamaters){
     // disconnect from AP after a delay
