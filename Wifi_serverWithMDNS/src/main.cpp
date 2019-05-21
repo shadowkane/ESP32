@@ -12,8 +12,8 @@
 /***** Constants and variables *****/
 
 // wifi initialization
-const char* AP_SSID = (char*)"J_family";
-const char* AP_Password = (char*)"1@&R_h&w_jomaa";
+const char* AP_SSID = (char*)"Your_SSID";
+const char* AP_Password = (char*)"Your_password";
 WiFiServer myServer(80);
 
 // wifi logo
