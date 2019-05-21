@@ -147,7 +147,7 @@ void setup() {
 
     clearString(64, 50, "Connecting . . . +");
     oledDisplay.setFont(Lato_Regular_11);
-    oledDisplay.drawString(64, 48, "Connected to J_family");
+    oledDisplay.drawString(64, 48, "Connected to AP");
     oledDisplay.display();
     Serial.println("  Connected to network");
     Serial.print("  Device Mac address: ");
