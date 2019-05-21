@@ -90,7 +90,7 @@ void setup() {
         if(WiFi.SSID(i).compareTo("Your_SSID") == 0){
           if(WiFi.isConnected() == false){
             Serial.println("  try to connect");
-            WiFi.begin("J_family","1@&R_h&w_jomaa");
+            WiFi.begin("Your_SSID","Your_password");
             while(WiFi.status() != WL_CONNECTED){
               delay(1000);
               Serial.println("  Establishing connection to WiFi..");
