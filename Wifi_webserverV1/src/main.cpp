@@ -11,8 +11,8 @@ using namespace std;
 
 #define LEDPIN 25
 
-const char* AP_SSID = "J_family";
-const char* AP_Password = "1@&R_h&w_jomaa";
+const char* AP_SSID = "Your_SSID";
+const char* AP_Password = "Your_password";
 
 WiFiServer myServer(80);
 
