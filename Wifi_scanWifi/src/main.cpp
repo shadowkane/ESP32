@@ -87,7 +87,7 @@ void setup() {
         Serial.print(") ");
         Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN)? "":"Need Password");
 
-        if(WiFi.SSID(i).compareTo("J_family") == 0){
+        if(WiFi.SSID(i).compareTo("Your_SSID") == 0){
           if(WiFi.isConnected() == false){
             Serial.println("  try to connect");
             WiFi.begin("J_family","1@&R_h&w_jomaa");
