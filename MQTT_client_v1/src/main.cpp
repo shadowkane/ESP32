@@ -21,6 +21,16 @@ WiFiClient clientSocket;
 // create the mqtt client
 PubSubClient mqtt_client(clientSocket);
 
+// usefull functions
+void printPublishState(String source, bool pubState){
+  Serial.print(source);
+  if(pubState == false){
+    Serial.println(" failed to publish the message.");
+  }else{
+    Serial.println(" successfuly published the message.");
+  }
+}
+
 // MQTT callback
 void MQTTCallback(char* topic, byte* payload, unsigned int length){
   Serial.print("Message received from the Broker about the topic ");
@@ -85,9 +95,28 @@ void loop() {
   Serial.println("Read hall sensor");
   int hall_val = hallRead();
   char msg[5];
+  bool pubState;
   sprintf(msg, "%d", hall_val);
   Serial.println("Publiss the hall sensor value to the MQTT broker under the hallSensor topic");
-  mqtt_client.publish("esp32/hallSensor", msg);
+  // using a normal publish function
+  pubState = mqtt_client.publish("esp32/hallSensor", msg);
+  printPublishState("sending hall sensor", pubState);
+  // send a very long messages using begin/stop publish
+  char long_msg[]="this is a very long message from esp client device i wan't to send to the broker to check if it works or not because i know that the defautl maximum size to send is 127 bytes";
+    // to prouve that a regular publish won't work
+  pubState = mqtt_client.publish("esp32/longPub", long_msg);
+  printPublishState("sending a long string with one pub", pubState);
+    // begin the pusblishing
+  mqtt_client.beginPublish("esp32/longPub", strlen(long_msg), false);
+  char sub_long_msg[5]; 
+  strncpy(sub_long_msg, long_msg, 5);
+  mqtt_client.write((byte*)sub_long_msg, 5);
+    // send the rest of the message
+  for(int i=5; i<strlen(long_msg); i++){
+    mqtt_client.write(long_msg[i]);
+  }
+    // close the publishing
+  mqtt_client.endPublish();
   mqtt_client.loop();
   delay(10000);
 }
