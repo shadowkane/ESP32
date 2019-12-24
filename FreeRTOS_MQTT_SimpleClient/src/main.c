@@ -17,11 +17,31 @@
 //#include <lwip/sockets.h>
 #include <driver/gpio.h>
 
+/*
+How to generate certificate:
+1- create the CA root (root certificate) in x509 type with an extension .pem or .crt (which is the same) because aws iot library read PEM certificates.
+2- generate private key for the broker
+3- generate a certificate signing request for that broker private key (this certificate will store the public key for that private key and other information about the broker)
+4- sign the broker certicate with ther CA root certificate and key. (this is why it's CA root, because it's the end of the certificate chain)
+5- repeat the same process (2 to 4) for the mqtt client (iot device)
+
+cmd using openssl:
+- CA root
+    openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout CAroot.key -out CAroot.crt
+- server/broker 
+    openssl genrsa -out mqttBroker.key 2048
+    openssl req -new -key mqttBroker.key -out mqttBroker.csr
+    openssl x509 -req -in mqttBroker.csr -CA CAroot.crt -CAkey CAroot.key -CAcreateserial -out mqttBrokerCert.crt -days 365 -sha256
+- client
+    openssl genrsa -out mqttClient.key 2048
+    openssl req -new -key mqttClient.key -out mqttClient.csr
+    openssl x509 -req -in mqttClient.csr -CA CAroot.crt -CAkey CAroot.key -CAcreateserial -out mqttClientCert.crt -days 365 -sha256
+ Note: make sure to use the same common name and use the MQTT broker ip address as the common name or the client side will faile to connect to broker if the option to verify the host name is enbaled.
+*/
+
 /* Certi and key */
 const char *CArootCert = "-----BEGIN CERTIFICATE-----\n\
 MIIDrjCCApagAwIBAgIJALl+t9jC0dNEMA0GCSqGSIb3DQEBCwUAMGwxCzAJBgNV\n\
-.\
-.\
 .\
 .\
 .\
@@ -34,18 +54,12 @@ MIIDVDCCAjwCCQC4P76sKOX0CjANBgkqhkiG9w0BAQsFADBsMQswCQYDVQQGEwJ0\n\
 .\
 .\
 .\
-.\
-.\
 oN2nN7FtjOD3XiwPfl49u78UmkJybP5Hr0aM4WbsJNscA+6IJCI7bUlV6fcI6IKw\n\
 +WeBqobnNVhqaP8EqYEeJ8QAQZ/rpqXJBt2tmm1BxKb2VBnrKQm4Lw==\n\
 -----END CERTIFICATE-----\n";
 
 const char *mqttClientKey = "-----BEGIN RSA PRIVATE KEY-----\n\
 MIIEpAIBAAKCAQEA4Z92iD6buQlbdJlEwe1yv1NlhoagbEEY2xUuq1b85UjngB+l\n\
-.\
-.\
-.\
-.\
 .\
 .\
 .\
