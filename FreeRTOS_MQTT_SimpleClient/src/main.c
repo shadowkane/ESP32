@@ -36,7 +36,7 @@ cmd using openssl:
     openssl genrsa -out mqttClient.key 2048
     openssl req -new -key mqttClient.key -out mqttClient.csr
     openssl x509 -req -in mqttClient.csr -CA CAroot.crt -CAkey CAroot.key -CAcreateserial -out mqttClientCert.crt -days 365 -sha256
- Note: make sure to use the same common name and use the MQTT broker ip address as the common name or the client side will faile to connect to broker if the option to verify the host name is enbaled.
+ Note: make sure to use the same common name and use the MQTT broker ip address as the common name otherwise the client side will faile to connect to broker if the option to verify the host name is enbaled.
 */
 
 /* Certi and key */
