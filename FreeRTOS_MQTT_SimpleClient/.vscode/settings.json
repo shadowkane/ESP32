@@ -1,0 +1,26 @@
+{
+    "files.associations": {
+        "esp_system.h": "c",
+        "esp_event_loop.h": "c",
+        "iot_mqtt.h": "c",
+        "stdio.h": "c",
+        "iot_config.h": "c",
+        "iot_mqtt_types.h": "c",
+        "freertos.h": "c",
+        "iot_platform_types_freertos.h": "c",
+        "event_groups.h": "c",
+        "nvs_flash.h": "c",
+        "iot_taskpool_types_freertos.h": "c",
+        "iot_platform_types.h": "c",
+        "aws_iot_mqtt_client.h": "c",
+        "mqtt_client.h": "c",
+        "sdkconfig.h": "c",
+        "aws_iot_config.h": "c",
+        "aws_iot_error.h": "c",
+        "queue.h": "c",
+        "task.h": "c",
+        "esp_wifi.h": "c",
+        "aws_iot_mqtt_client_common_internal.h": "c",
+        "aws_iot_log.h": "c"
+    }
+}
